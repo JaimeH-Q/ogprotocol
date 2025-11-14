@@ -1,0 +1,32 @@
+{
+  "jaime": {
+    "contractAddress": "0xB0E5860604E3b11f544421A2E06a9C767c7d3b2E",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "deployedAt": "2025-11-14T19:11:45.896Z"
+  },
+  "elpepe": {
+    "contractAddress": "0xb5917348A06f667ba9a9E0187b6525DA9e4F2B1a",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "deployedAt": "2025-11-14T19:15:29.856Z"
+  },
+  "eskere": {
+    "contractAddress": "0xfeb50506C3d6410A76348b5D28C8e879CEd7cB51",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "deployedAt": "2025-11-14T19:21:13.567Z"
+  },
+  "hola": {
+    "contractAddress": "0x033f83786B4c31b43257397711716317BCD62206",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "deployedAt": "2025-11-14T19:24:09.860Z"
+  },
+  "asd": {
+    "contractAddress": "0xd676A4d23DE1578506287FBFA8d2B427Db3eaC95",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "deployedAt": "2025-11-14T19:28:47.147Z"
+  }
+}
