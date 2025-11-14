@@ -14,5 +14,10 @@
     "dotenv": "^17.2.3",
     "ethers": "^6.15.0",
     "hardhat": "^3.0.14"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^22.19.1",
+    "typescript": "~5.8.0"
   }
 }
