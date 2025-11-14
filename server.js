@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
-import { createContract, getPlayerRecord } from './backend/contractManager.js';
+import { createContract, getUserContract, getPlayerRecord } from './backend/contractManager.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -35,6 +35,22 @@ app.post('/user', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message || 'Failed to create contract' });
   }
+});
+
+
+app.get('/user/:username', async (req, res) => {
+  const { username } = req.params;
+  const record = getPlayerRecord(username);
+  if (!record) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const contract = await getUserContract(username);
+  if (!contract) {
+    return res.status(404).json({ error: 'Contract not found for user' });
+  }
+
+  res.json(contract);
 });
 
 app.listen(port, () => {

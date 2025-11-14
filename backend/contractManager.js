@@ -44,7 +44,7 @@ async function createContract(username, address) {
   const store = readStore();
   if (store[username]) throw new Error('Username already exists');
 
-  const artifact = JSON.parse(fs.readFileSync(ARTIFACT_PATH, 'utf8'));
+  const artifact = loadArtifact();
   const factory = new ethers.ContractFactory(artifact.abi, artifact.bytecode, signer);
 
   console.log(`Deploying contract for ${username} (${normalizedAddress}) from ${deployer} with balance ${ethers.formatEther(balance)} ETH`);
@@ -73,19 +73,47 @@ async function createContract(username, address) {
 
 async function getUserContract(username) {
   const store = readStore();
-  const contractAddress = store[username]?.contractAddress;
-  if (!contractAddress) throw new Error('Username does not exist');
+  const record = store[username];
+  if (!record) throw new Error('Username does not exist');
+  const contractAddress = record.contractAddress;
+  console.log("Reading contract Address:", contractAddress + " for user:", username);
 
-  const abi = JSON.parse(fs.readFileSync(ARTIFACT_PATH, 'utf8')).abi;
+  const artifact = loadArtifact();
+  const abi = artifact.abi;
   const contract = new ethers.Contract(contractAddress, abi, provider);
+  const killsBn = await contract.getKills(record.playerAddress).catch(() => -1n);
+  // console.log(`Fetched kills for ${username}:`, killsBn.toString());
+
+  // Normalize kills to a JSON-serializable value (string or null)
+  let kills = null;
+  try {
+    if (typeof killsBn === 'bigint') {
+      kills = killsBn === -1n ? null : killsBn.toString();
+    } else if (killsBn && typeof killsBn.toString === 'function') {
+      // handles BigNumber-like objects
+      const s = killsBn.toString();
+      kills = s === '-1' ? null : s;
+    } else {
+      kills = null;
+    }
+  } catch (e) {
+    kills = null;
+  }
 
   return {
-    contract,
-    owner: store[username].owner,
-    playerAddress: store[username].playerAddress,
-    deployedAt: store[username].deployedAt,
+    contractAddress: record.contractAddress,
+    owner: record.owner,
+    playerAddress: record.playerAddress,
+    deployedAt: record.deployedAt,
+    kills: kills,
   };
 }
+
+function loadArtifact() {
+  if (!fs.existsSync(ARTIFACT_PATH)) throw new Error(`Artifact not found at ${ARTIFACT_PATH}. Run npx hardhat compile first.`);
+  return JSON.parse(fs.readFileSync(ARTIFACT_PATH, 'utf8'));
+}
+
 
 function writeStore(store) {
   try {
