@@ -7,10 +7,12 @@ import { createContract, getUserContract, getPlayerRecord } from './backend/cont
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware para leer JSON del body
-app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:2000',  
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
+}));
 
-// Root endpoint
 app.get('/', (req, res) => {
   res.send('OG Protocol Backend is running!');
 });

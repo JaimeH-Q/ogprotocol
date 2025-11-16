@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node server.js",
     "dev:node": "npx hardhat node",
     "compile": "npx hardhat compile",
     "deploy": "node scripts/deploy.js",
@@ -16,6 +16,7 @@
   "type": "module",
   "dependencies": {
     "arkiv-sdk": "^0.1.19",
+    "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "ethers": "^6.15.0",
     "express": "^4.18.2",
