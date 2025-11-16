@@ -40,5 +40,12 @@
     "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
     "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
     "deployedAt": "2025-11-16T02:50:01.212Z"
+  },
+  "wachiwachiwa": {
+    "contractAddress": "0xA0E04e47Bf630c74a1cC2B2131FCa4c3F2c3DDde",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "5C8Rr95BuU58oXkqKEtdvFVtrPFTmhxwPYnTeNHTiF15P6RV",
+    "playerAddressIsEthereum": false,
+    "deployedAt": "2025-11-16T07:10:15.952Z"
   }
 }

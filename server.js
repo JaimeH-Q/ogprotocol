@@ -12,10 +12,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: '*',  
+  origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+app.options('*', cors());
+app.use(express.json());
+
+
 
 app.get('/', (req, res) => {
   res.send('OG Protocol Backend is running!');
@@ -114,9 +118,6 @@ app.get('/user/:username', async (req, res) => {
  * Create a login token for a given username.
  * GET /token?username=<username>
  *
- * NOTE: Generating a token no longer requires that the player is already registered.
- * Tokens can be requested by clients before user registration; the token will still be
- * associated with the provided `username` string.
  */
 app.get('/token', async (req, res) => {
   try {
@@ -201,4 +202,9 @@ app.post('/validatesession', async (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  console.log("Rutas registradas:");
+console.log(app._router.stack
+  .filter(r => r.route)
+  .map(r => Object.keys(r.route.methods) + " " + r.route.path)
+);
 });

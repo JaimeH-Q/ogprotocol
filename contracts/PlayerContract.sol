@@ -8,11 +8,14 @@ contract PlayerData {
         uint256 kills;
         bool exists;
     }
-
     mapping(address => Player) private players;
+    // Support for non-EVM identifiers using bytes32 keys
+
+    mapping(bytes32 => Player) private playersById;
     address public owner;
 
     event KillsUpdated(address indexed player, uint256 kills);
+    event KillsUpdatedById(bytes32 indexed playerId, uint256 kills);
 
     constructor() {
         owner = msg.sender;
@@ -35,6 +38,11 @@ contract PlayerData {
         return players[_player].kills;
     }
 
+    /// @notice Get kills for a player identified by a bytes32 id (keccak256 of identifier string)
+    function getKillsById(bytes32 _playerId) external view returns (uint256) {
+        return playersById[_playerId].kills;
+    }
+
     function incrementKills(uint256 _by) external {
         players[msg.sender].kills += _by;
         players[msg.sender].exists = true;
@@ -45,5 +53,12 @@ contract PlayerData {
         players[_player].kills = _kills;
         players[_player].exists = true;
         emit KillsUpdated(_player, _kills);
+    }
+
+    /// @notice Admin entrypoint to set kills for a non-EVM identifier (keccak256 id)
+    function adminSetKillsById(bytes32 _playerId, uint256 _kills) external onlyOwner {
+        playersById[_playerId].kills = _kills;
+        playersById[_playerId].exists = true;
+        emit KillsUpdatedById(_playerId, _kills);
     }
 }

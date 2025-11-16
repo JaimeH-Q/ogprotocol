@@ -200,7 +200,7 @@ async function registerSession(tokenUuid, ip) {
     const remoteIp = remote && remote.ip ? String(remote.ip) : null;
     if (!remoteIp) {
       // remote didn't store ip as a field — surface an error so caller can inspect logs
-      console.warn('Remote session did not include ip field', { fileId, remote });
+      // console.warn('Remote session did not include ip field', { fileId, remote });
       return { fileId, session: sessionObj, verified: false, arkacdn: { status: res.status, body: parsed } };
     }
     return { fileId, session: sessionObj, verified: true, arkacdn: { status: res.status, body: parsed } };

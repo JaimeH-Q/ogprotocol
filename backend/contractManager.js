@@ -31,11 +31,18 @@ function readStore() {
 async function createContract(username, address) {
   if (!signer) throw new Error('No signer available. Please set PRIVATE_KEY in .env');
 
-  let normalizedAddress;
+  // Accept both Ethereum addresses and other identifier formats (Polkadot, etc.).
+  // If it's a valid EVM address we normalize it; otherwise we keep the raw identifier.
+  let normalizedAddress = address;
+  let isEthereumAddress = false;
   try {
     normalizedAddress = ethers.getAddress(address);
+    isEthereumAddress = true;
   } catch (error) {
-    throw new Error('Invalid Ethereum address provided.');
+    // Not an EVM address — treat as external identifier (store as-is)
+    console.log('Non-EVM identifier provided; storing as off-chain identifier:', address);
+    normalizedAddress = address;
+    isEthereumAddress = false;
   }
 
   const deployer = await signer.getAddress();
@@ -57,16 +64,34 @@ async function createContract(username, address) {
     contractAddress: contract.target,
     owner: deployer,
     playerAddress: normalizedAddress,
+    playerAddressIsEthereum: isEthereumAddress,
     deployedAt: new Date().toISOString(),
   };
 
-  try {
-    const initTx = await contract.adminSetKills(normalizedAddress, 0);
-    console.log(`Initializing kills=0 for player ${normalizedAddress}`);
-    writeStore(store);
-  } catch (e) {
-    throw new Error(`Failed to broadcast initialization tx: ${e?.message || e}`);
+  // Persist the store before attempting on-chain actions so the record exists
+  writeStore(store);
+
+  // If it's an Ethereum address, initialize the address mapping on-chain.
+  if (isEthereumAddress) {
+    try {
+      const initTx = await contract.adminSetKills(normalizedAddress, 0);
+      console.log(`Initializing kills=0 for EVM player ${normalizedAddress}`);
+    } catch (e) {
+      throw new Error(`Failed to broadcast initialization tx: ${e?.message || e}`);
+    }
   }
+
+    // Additionally, initialize the generic id mapping (bytes32) so non-EVM identifiers
+    // are represented on-chain. We compute keccak256 over the identifier string.
+    try {
+      const idHash = ethers.id(normalizedAddress);
+      // call adminSetKillsById for all identifiers (this will set the bytes32 mapping).
+      await contract.adminSetKillsById(idHash, 0);
+      console.log(`Initialized id-hash mapping on-chain for ${normalizedAddress} -> ${idHash}`);
+    } catch (e) {
+      // If the contract doesn't have adminSetKillsById (old ABI), surface a clear message
+      console.warn('Could not initialize id-hash mapping on-chain (contract may need recompilation/redeploy):', e?.message || e);
+    }
 
   return contract;
 }
@@ -81,7 +106,25 @@ async function getUserContract(username) {
   const artifact = loadArtifact();
   const abi = artifact.abi;
   const contract = new ethers.Contract(contractAddress, abi, provider);
-  const killsBn = await contract.getKills(record.playerAddress).catch(() => -1n);
+  // Prefer on-chain lookup by address when we know it's an Ethereum address,
+  // otherwise use the bytes32 id lookup (keccak256 of identifier string).
+  let killsBn = -1n;
+  try {
+    if (record.playerAddressIsEthereum) {
+      killsBn = await contract.getKills(record.playerAddress).catch(() => -1n);
+    } else {
+      const idHash = ethers.id(record.playerAddress);
+      // Try the id-based getter; if it fails (old contract), fallback to -1n
+      if (typeof contract.getKillsById === 'function') {
+        killsBn = await contract.getKillsById(idHash).catch(() => -1n);
+      } else {
+        // contract doesn't support id-based getter
+        killsBn = -1n;
+      }
+    }
+  } catch (e) {
+    killsBn = -1n;
+  }
   // console.log(`Fetched kills for ${username}:`, killsBn.toString());
 
   // Normalize kills to a JSON-serializable value (string or null)
