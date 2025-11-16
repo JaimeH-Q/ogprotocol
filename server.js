@@ -6,12 +6,13 @@ import { createContract, getUserContract, getPlayerRecord } from './backend/cont
 import { createToken, getToken, registerSession, getSessionForUsername } from './backend/sessionManager.js';
 import fs from 'fs';
 import path from 'path';
+import cors from 'cors';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: 'http://localhost:2000',  
+  origin: '*',  
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type'],
 }));
