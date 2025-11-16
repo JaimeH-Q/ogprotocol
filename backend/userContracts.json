@@ -28,5 +28,17 @@
     "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
     "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
     "deployedAt": "2025-11-14T19:28:47.147Z"
+  },
+  "ijaimexarg": {
+    "contractAddress": "0xe7B8a5bb9eBCB29ff260292987976f859f7e9D5E",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "deployedAt": "2025-11-16T01:35:23.110Z"
+  },
+  "wachiturro": {
+    "contractAddress": "0xe37844A29D655ce72242b8134D1B967EEe6EF9af",
+    "owner": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "playerAddress": "0x43087fEe273D99c654231f7c45B28c37E443322B",
+    "deployedAt": "2025-11-16T02:50:01.212Z"
   }
 }
